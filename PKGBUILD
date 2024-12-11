@@ -2,16 +2,16 @@
 
 pkgname=mesa-pvr-k1x
 pkgdesc="Mesa wrapper for PVR DDK 23.2 blobs (SpacemiT K1-x)"
-pkgver=23.2+bianbu1.0_alpha2
+_tag=v2.0.2
+pkgver=23.2+bianbu_${_tag}
 pkgrel=1
 arch=('riscv64')
 makedepends=('git' 'python-mako' 'xorgproto'
               'libxml2' 'libx11'  'libvdpau' 'libva' 'elfutils' 'libxrandr'
-              'wayland-protocols' 'meson' 'ninja' 'glslang' )
+              'wayland-protocols' 'meson' 'ninja' 'glslang' 'pandoc-cli')
 depends=('mesa' 'img-gpu-k1x')
-url="https://www.mesa3d.org"
-license=('custom')
-_tag=v1.0.15
+url="https://github.com/Icenowy/aosc-os-pvr/tree/master/ddk232"
+license=('MIT AND Khronos AND SGI-Free-Software-License-B AND Boost-permissive')
 _srcname=mesa3d-${_tag}
 source=("${_srcname}.tar.gz::https://gitee.com/bianbu-linux/mesa3d/repository/archive/${_tag}.tar.gz"
         '0001-redirect-glapi.patch'
@@ -20,7 +20,7 @@ source=("${_srcname}.tar.gz::https://gitee.com/bianbu-linux/mesa3d/repository/ar
         '0004-gbm-backend-ize.patch'
         '0005-add-dri-alias-for-spacemit.patch')
 
-sha256sums=('f6be25a12d8c61a496cac1a95cd185f9d4195be4197e14bcf030a96f1baa7d16'
+sha256sums=('acb1fa6e08ac75b4bbd7ffedc32a79997f9e67f10549281c76753a6b287888d1'
             'ebb6f66cb1dcfa29542fa220977462352febebadf0ba90befda7366d52cbc757'
             '96c57bc809767e1e8c88bfaa2c63f1c2d936853b1041339489939f15d455bd19'
             '77e89ada90f43acdedc5787e3a044d2662db3f94108d7002d0da079cb940fe10'
@@ -64,4 +64,6 @@ package() {
     cp -r ${srcdir}/tmp/usr/lib/gbm ${pkgdir}/usr/lib/
     ln -sf pvr_gbm.so ${pkgdir}/usr/lib/gbm/spacemit_gbm.so
     cp ${srcdir}/tmp/usr/share/glvnd/egl_vendor.d/50_pvr.json ${pkgdir}/usr/share/glvnd/egl_vendor.d/40_pvr.json
+    mkdir -p ${pkgdir}/usr/share/licenses/${pkgname}
+    pandoc -f rst -t plain ${srcdir}/${_srcname}/docs/license.rst -o ${pkgdir}/usr/share/licenses/${pkgname}/LICENSE
 }
